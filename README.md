@@ -7,15 +7,6 @@
 This project focuses on predicting delivery delays in logistics using the publicly available [Logistics Data Containing Real-World Data](https://www.kaggle.com/datasets/pushpitkamboj/logistics-data-containing-real-world-data) dataset.  
 By analyzing shipment patterns and delivery characteristics, this project aims to help supply chain professionals anticipate potential delays, optimize operations, and improve customer satisfaction through data-driven insights.  
 
----
-
-## **Live App**
-Experience the interactive **Delivery Delay Prediction Dashboard** here:  
-👉 [**Launch Streamlit App**]([(https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/)](https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/))
-
----
-
-
 **Key highlights of the project:**  
 - Comprehensive **Exploratory Data Analysis (EDA)** to identify trends and delay drivers.  
 - **Feature engineering** for shipment, product, and time-related attributes.  
@@ -24,6 +15,15 @@ Experience the interactive **Delivery Delay Prediction Dashboard** here:
 - Performance evaluation using **accuracy**, **precision**, **recall**, and **F1-score** metrics.  
 
 **SEO Keywords:** logistics delay prediction, supply chain analytics, machine learning for logistics, EDA, stacking classifier, Random Forest, XGBoost, SMOTE, predictive modeling, delivery performance.
+
+
+---
+
+## **Live App**
+Experience the interactive **Delivery Delay Prediction Dashboard** here:  
+👉 [**Launch Streamlit App**](https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/)
+
+> ⚙️ *Note: The app may take a few seconds to load depending on server availability.*
 
 ---
 
