@@ -11,7 +11,7 @@ By analyzing shipment patterns and delivery characteristics, this project aims t
 
 ## **Live App**
 Experience the interactive **Delivery Delay Prediction Dashboard** here:  
-👉 [**Launch Streamlit App**]((https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/))
+👉 [**Launch Streamlit App**]([(https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/)](https://logistics-delivery-delay---eda-and-prediction-mu8xttxw7udcwdpp.streamlit.app/))
 
 ---
 
