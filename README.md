@@ -43,28 +43,6 @@ Experience the interactive **Delivery Delay Prediction Dashboard** here:
 
 ---
 
-## **Project Structure**
-```
-Logistics Delivery Delay - EDA and Prediction/
-│
-├── Data/
-│   └── logistics_data.csv
-│
-├── Images/
-│   ├── Delivery Outcome Distribution.png
-│   ├── Order Volume per Month by Delivery Outcome.png
-│   ├── Delivery Outcome by Shipping Mode.png
-│   └── Distribution of Delivery Time (Days) by Region.png
-│
-├── Notebooks/
-│   └── Delivery Delay Prediction.ipynb
-│
-├── requirements.txt
-└── README.md
-```
-
----
-
 ## **Installation & Usage**
 
 1. **Clone the repository**
