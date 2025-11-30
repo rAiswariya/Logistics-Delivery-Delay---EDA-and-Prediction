@@ -5,9 +5,9 @@ import os
 import requests
 import numpy as np
 import datetime as dt
-import plotly.graph_objects as go
 import pandas as pd
 import base64
+from streamlit_lottie import st_lottie   # NEW
 
 @st.cache_resource
 def load_model():
@@ -64,6 +64,16 @@ st.title("How Punctual Is Your Delivery? Let's Check!")
 def clear_inputs():
     for key in st.session_state.keys():
         st.session_state[key] = None
+
+
+# =====================================================================
+# LOTTIE LOADER (NEW)
+# =====================================================================
+def load_lottie(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
 
 
 # =====================================================================
@@ -247,39 +257,31 @@ def main():
         else:
             st.error("The order is likely to be **late**")
 
-        probs = model.predict_proba(features)[0]
-        labels = ['Early', 'On Time', 'Late']
-        pred_class = result[0]
-        pred_prob = probs[pred_class] * 100
+        # =============================================================================
+        # REPLACE GAUGE WITH LOGISTICS ANIMATIONS
+        # =============================================================================
 
-        colors = {
-            0: ("green", [
-                {'range': [0, 50], 'color': "lightgreen"},
-                {'range': [50, 80], 'color': "green"},
-                {'range': [80, 100], 'color': "darkgreen"}
-            ]),
-            1: ("blue", [
-                {'range': [0, 50], 'color': "lightblue"},
-                {'range': [50, 80], 'color': "deepskyblue"},
-                {'range': [80, 100], 'color': "navy"}
-            ]),
-            2: ("red", [
-                {'range': [0, 50], 'color': "lightcoral"},
-                {'range': [50, 80], 'color': "tomato"},
-                {'range': [80, 100], 'color': "darkred"}
-            ])
-        }
+        st.subheader("Delivery Prediction Animation")
 
-        bar_color, steps = colors[pred_class]
+        # URLs for animations
+        early_anim_url = "https://assets2.lottiefiles.com/packages/lf20_t9gkkhz4.json"
+        ontime_anim_url = "https://assets10.lottiefiles.com/packages/lf20_ZXQd9U.json"
+        late_anim_url = "https://assets1.lottiefiles.com/packages/lf20_gjmecwii.json"
 
-        fig = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=pred_prob,
-            title={'text': f"Prediction Confidence: {labels[pred_class]}"},
-            gauge={'axis': {'range': [0, 100]}, 'bar': {'color': bar_color}, 'steps': steps}
-        ))
+        # Choose the right animation
+        if result[0] == 0:
+            anim_url = early_anim_url
+        elif result[0] == 1:
+            anim_url = ontime_anim_url
+        else:
+            anim_url = late_anim_url
 
-        st.plotly_chart(fig, use_container_width=True)
+        animation = load_lottie(anim_url)
+
+        if animation:
+            st_lottie(animation, height=250)
+        else:
+            st.info("🚚 Animation could not load.")
 
 
 if __name__ == "__main__":
