@@ -9,3 +9,5 @@ imbalanced-learn
 streamlit
 plotly
 requests
+streamlit-lottie
+
