@@ -20,36 +20,31 @@ def load_model():
 
 model = load_model()
 
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(BASE_DIR, "data")
 
-def set_bg(image_file):
 
+# =====================================================================
+# Background setup
+# =====================================================================
+def set_bg(image_file):
     with open(image_file, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(
         f"""
         <style>
-        /* Background image setup */
         .stApp {{
             background-image: url("data:image/png;base64,{encoded}");
-            background-size: cover;            /* Scale to fill */
-            background-position: bottom center; /* Keep bottom visible */
+            background-size: cover;
+            background-position: bottom center;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }}
-
-        /* Semi-transparent overlay for readability */
         .block-container {{
             background-color: rgba(0, 0, 0, 0.7);
             padding: 2rem;
             border-radius: 10px;
-        }}
-
-        /* Make all text white for contrast */
-        .block-container, .block-container * {{
             color: white !important;
         }}
         </style>
@@ -62,63 +57,155 @@ set_bg(image_path)
 
 st.title("How Punctual Is Your Delivery? Let's Check!")
 
+
+# =====================================================================
+# RESET BUTTON FUNCTIONALITY
+# =====================================================================
+def clear_inputs():
+    for key in st.session_state.keys():
+        st.session_state[key] = None
+
+
+# =====================================================================
+# MAIN FUNCTION
+# =====================================================================
 def main():
     st.set_page_config(page_title="Order Delivery Prediction", layout="centered")
     st.markdown("Fill in the order details below to check delivery likelihood:")
 
     state_city_df = pd.read_csv(os.path.join(data_dir, "state_city_pairs.csv"))
-    category_list = pd.read_csv(os.path.join(data_dir, "categories.csv"), header=None)[
-        0].sort_values().unique().tolist()
+    category_list = pd.read_csv(os.path.join(data_dir, "categories.csv"), header=None)[0].sort_values().unique().tolist()
     state_list = sorted(state_city_df['order_state'].dropna().unique())
     dept_list = pd.read_csv(os.path.join(data_dir, "departments.csv"), header=None)[0].sort_values().unique().tolist()
-    cust_state_list = pd.read_csv(os.path.join(data_dir, "cust_states.csv"), header=None)[
-        0].sort_values().unique().tolist()
-    # ==========================
-    # User Inputs
-    # ==========================
+    cust_state_list = pd.read_csv(os.path.join(data_dir, "cust_states.csv"), header=None)[0].sort_values().unique().tolist()
+
     col1, col2 = st.columns(2)
+
     with col1:
-        payment_type = st.selectbox("Payment Type", ['CASH', 'DEBIT', 'PAYMENT', 'TRANSFER'])
-        category_name = st.selectbox("Category Name", category_list)
-        selected_state = st.selectbox("Select Order State", state_list)
-        city_list = (state_city_df[state_city_df['order_state'] == selected_state][
-                         'order_city'].dropna().sort_values().unique().tolist())
-        selected_city = st.selectbox("Select Order City", city_list)
-        customer_state = st.selectbox("Product Location", cust_state_list)
-        department_name = st.selectbox("Department Name", dept_list)
-        market = st.selectbox("Market", ['Africa', 'Europe', 'LATAM', 'Pacific Asia', 'USCA'])
+        payment_type = st.selectbox(
+            "Payment Type",
+            ["-- Select --"] + ['CASH', 'DEBIT', 'PAYMENT', 'TRANSFER'],
+            index=0,
+            key="payment_type"
+        )
+
+        category_name = st.selectbox(
+            "Category Name",
+            ["-- Select --"] + category_list,
+            index=0,
+            key="category_name"
+        )
+
+        selected_state = st.selectbox(
+            "Select Order State",
+            ["-- Select --"] + state_list,
+            index=0,
+            key="order_state"
+        )
+
+        city_list = []
+        if selected_state != "-- Select --":
+            city_list = state_city_df[state_city_df['order_state'] == selected_state]['order_city']
+            city_list = city_list.dropna().sort_values().unique().tolist()
+
+        selected_city = st.selectbox(
+            "Select Order City",
+            ["-- Select --"] + city_list,
+            index=0,
+            key="order_city"
+        )
+
+        customer_state = st.selectbox(
+            "Product Location",
+            ["-- Select --"] + cust_state_list,
+            index=0,
+            key="customer_state"
+        )
+
+        department_name = st.selectbox(
+            "Department Name",
+            ["-- Select --"] + dept_list,
+            index=0,
+            key="department_name"
+        )
+
+        market = st.selectbox(
+            "Market",
+            ["-- Select --"] + ['Africa', 'Europe', 'LATAM', 'Pacific Asia', 'USCA'],
+            index=0,
+            key="market"
+        )
 
     with col2:
-        order_item_quantity = st.number_input("Order Item Quantity", min_value=1.0)
-        order_item_discount = st.number_input("Order Item Discount ($)", min_value=0.0)
-        order_item_total_amount = st.number_input("Order Item Total Amount ($)", min_value=0.0)
-        order_status = st.selectbox("Shipping Status", [
-            'CLOSED', 'COMPLETE', 'ON_HOLD', 'PAYMENT_REVIEW',
-            'PENDING', 'PENDING_PAYMENT', 'PROCESSING'
-        ])
-        shipping_mode = st.selectbox("Shipping Mode", [
-            'First Class', 'Second Class', 'Same Day', 'Standard Class'
-        ])
-        order_date = st.date_input("Order Date", dt.date(2024, 1, 1))
-        ship_date = st.date_input("Ship Date", dt.date(2024, 1, 2))
+        order_item_quantity = st.number_input(
+            "Order Item Quantity",
+            min_value=0.0,
+            format="%.1f",
+            key="order_item_quantity"
+        )
 
-    # ==========================
-    # Compute date difference
-    # ==========================
+        order_item_discount = st.number_input(
+            "Order Item Discount ($)",
+            min_value=0.0,
+            format="%.2f",
+            key="order_item_discount"
+        )
+
+        order_item_total_amount = st.number_input(
+            "Order Item Total Amount ($)",
+            min_value=0.0,
+            format="%.2f",
+            key="order_item_total_amount"
+        )
+
+        order_status = st.selectbox(
+            "Shipping Status",
+            ["-- Select --"] + [
+                'CLOSED', 'COMPLETE', 'ON_HOLD', 'PAYMENT_REVIEW',
+                'PENDING', 'PENDING_PAYMENT', 'PROCESSING'
+            ],
+            index=0,
+            key="order_status"
+        )
+
+        shipping_mode = st.selectbox(
+            "Shipping Mode",
+            ["-- Select --"] + [
+                'First Class', 'Second Class', 'Same Day', 'Standard Class'
+            ],
+            index=0,
+            key="shipping_mode"
+        )
+
+        order_date = st.date_input("Order Date", value=None, key="order_date")
+        ship_date = st.date_input("Ship Date", value=None, key="ship_date")
+
+    # CLEAR BUTTON
+    st.button("Clear", on_click=clear_inputs)
+
+    # VALIDATION
+    if None in [
+        payment_type, category_name, selected_state, selected_city,
+        customer_state, department_name, market, order_item_quantity,
+        order_item_discount, order_item_total_amount, order_status,
+        shipping_mode, order_date, ship_date
+    ] or "-- Select --" in [
+        payment_type, category_name, selected_state, selected_city,
+        customer_state, department_name, market, order_status, shipping_mode
+    ]:
+        st.warning("Please fill in all fields before predicting.")
+        return
+
+    # DATE CHECK
     date_diff = (ship_date - order_date).days
     if date_diff < 0:
         st.error("⚠️ Ship Date cannot be before Order Date!")
+        return
 
-    # ==========================
-    # Label Encoding (alphabetical)
-    # ==========================
-    # ==========================
-    # Label Encoding (alphabetical)
-    # ==========================
+    # LABEL ENCODERS
     def label_map(values_list):
         return {v: i for i, v in enumerate(sorted(values_list))}
 
-    # Create label encodings using the available lists
     mappings = {
         'payment_type': label_map(['CASH', 'DEBIT', 'PAYMENT', 'TRANSFER']),
         'order_status': label_map([
@@ -134,79 +221,62 @@ def main():
         'customer_state': label_map(cust_state_list)
     }
 
-    # Apply mappings
-    payment_value = mappings['payment_type'][payment_type]
-    order_status_value = mappings['order_status'][order_status]
-    shipping_mode_value = mappings['shipping_mode'][shipping_mode]
-    market_value = mappings['market'][market]
-    category_value = mappings['category_name'][category_name]
-    city_value = mappings['order_city'][selected_city]
-    state_value = mappings['order_state'][selected_state]
-    dept_value = mappings['department_name'][department_name]
-    cust_state_value = mappings['customer_state'][customer_state]
-
-    # ==========================
-    # Create final feature vector
-    # ==========================
     features = np.array([[
-        payment_value, category_value, city_value, order_item_quantity,
-        order_item_total_amount, state_value, order_status_value,
-        shipping_mode_value, date_diff, market_value, cust_state_value,
-        order_item_discount, dept_value
+        mappings['payment_type'][payment_type],
+        mappings['category_name'][category_name],
+        mappings['order_city'][selected_city],
+        order_item_quantity,
+        order_item_total_amount,
+        mappings['order_state'][selected_state],
+        mappings['order_status'][order_status],
+        mappings['shipping_mode'][shipping_mode],
+        date_diff,
+        mappings['market'][market],
+        mappings['customer_state'][customer_state],
+        order_item_discount,
+        mappings['department_name'][department_name]
     ]])
 
     if st.button("PREDICT"):
         result = model.predict(features)
 
         if result[0] == 0:
-            st.success(f"The order is likely to be delivered **early**")
+            st.success("The order is likely to be delivered **early**")
         elif result[0] == 1:
-            st.info(f"The order is likely to be delivered **on time**")
+            st.info("The order is likely to be delivered **on time**")
         else:
-            st.error(f"The order is likely to be **late**")
-
+            st.error("The order is likely to be **late**")
 
         probs = model.predict_proba(features)[0]
-        pred_class = result[0]
         labels = ['Early', 'On Time', 'Late']
-        pred_label = labels[pred_class]
+        pred_class = result[0]
+        pred_prob = probs[pred_class] * 100
 
-        # Get the probability for the predicted label
-        pred_prob = probs[pred_class] * 100  # convert to percentage
-
-        # Define gauge colors and range logic
-        if pred_class == 0:  # Early
-            bar_color = "green"
-            steps = [
+        colors = {
+            0: ("green", [
                 {'range': [0, 50], 'color': "lightgreen"},
                 {'range': [50, 80], 'color': "green"},
                 {'range': [80, 100], 'color': "darkgreen"}
-            ]
-        elif pred_class == 1:  # On Time
-            bar_color = "blue"
-            steps = [
+            ]),
+            1: ("blue", [
                 {'range': [0, 50], 'color': "lightblue"},
                 {'range': [50, 80], 'color': "deepskyblue"},
                 {'range': [80, 100], 'color': "navy"}
-            ]
-        else:  # Late
-            bar_color = "red"
-            steps = [
+            ]),
+            2: ("red", [
                 {'range': [0, 50], 'color': "lightcoral"},
                 {'range': [50, 80], 'color': "tomato"},
                 {'range': [80, 100], 'color': "darkred"}
-            ]
+            ])
+        }
 
-        # Create the gauge
+        bar_color, steps = colors[pred_class]
+
         fig = go.Figure(go.Indicator(
             mode="gauge+number",
             value=pred_prob,
-            title={'text': f"Prediction Confidence: {pred_label}"},
-            gauge={
-                'axis': {'range': [0, 100]},
-                'bar': {'color': bar_color},
-                'steps': steps
-            }
+            title={'text': f"Prediction Confidence: {labels[pred_class]}"},
+            gauge={'axis': {'range': [0, 100]}, 'bar': {'color': bar_color}, 'steps': steps}
         ))
 
         st.plotly_chart(fig, use_container_width=True)
