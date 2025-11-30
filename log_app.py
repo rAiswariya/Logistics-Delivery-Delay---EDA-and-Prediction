@@ -76,9 +76,9 @@ def load_lottie(url):
     return r.json()
 
 # Permanent logistics animations (verified)
-EARLY_ANIM = "https://lottie.host/5f08c48f-cc09-4ca2-8fdc-99c3a2a63bf8/NuDnr4mYFj.json"
-ONTIME_ANIM = "https://lottie.host/6dff0e20-445a-42ca-a442-7fcd4df39b88/WuulQHxPgO.json"
-LATE_ANIM = "https://lottie.host/61919264-85ee-4af6-b0ff-00dfb0b16ea3/5oGfCwllLB.json"
+EARLY_ANIM = "https://assets7.lottiefiles.com/packages/lf20_1pxqjqps.json"
+ONTIME_ANIM = "https://assets4.lottiefiles.com/packages/lf20_j1adxtyb.json"
+LATE_ANIM = "https://assets1.lottiefiles.com/packages/lf20_4DLPlK.json"
 
 
 # =====================================================================
@@ -228,3 +228,4 @@ def main():
 # RUN APP
 if __name__ == "__main__":
     main()
+
