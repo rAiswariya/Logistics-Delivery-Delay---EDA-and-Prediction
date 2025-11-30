@@ -187,7 +187,6 @@ def main():
             img_file = "late_van.png"
             label = "Late"
 
-        st.subheader(f"Delivery Status: {label}")
 
         # SHOW IMAGE
         img_path = os.path.join(BASE_DIR, "Images", img_file)
@@ -196,3 +195,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
