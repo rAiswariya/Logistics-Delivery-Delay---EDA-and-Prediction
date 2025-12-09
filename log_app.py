@@ -62,8 +62,9 @@ st.title("How Punctual Is Your Delivery? Let's Check!")
 # RESET BUTTON
 # =====================================================================
 def clear_inputs():
-    st.session_state.clear()      # wipe all widget states
-    st.experimental_rerun()       # refresh UI so widgets reset
+    for key in st.session_state.keys():
+        st.session_state[key] = None
+
 
 
 # =====================================================================
@@ -195,5 +196,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
