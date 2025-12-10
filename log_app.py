@@ -58,12 +58,6 @@ set_bg(image_path)
 
 st.title("How Punctual Is Your Delivery? Let's Check!")
 
-# =====================================================================
-# RESET BUTTON
-# =====================================================================
-def clear_inputs():
-    for key in st.session_state.keys():
-        st.session_state[key] = None
 
 
 
@@ -114,8 +108,7 @@ def main():
         order_date = st.date_input("Order Date", value=None)
         ship_date = st.date_input("Ship Date", value=None)
 
-    st.button("Clear", on_click=clear_inputs)
-
+    
     # VALIDATION
     if None in [
         payment_type, category_name, selected_state, selected_city,
@@ -196,6 +189,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
